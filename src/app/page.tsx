@@ -13,9 +13,27 @@ export default function Home() {
 
 const apiKey = process.env.REACT_APP_API_KEY
 
-// create a function to get the weather from api key
+async function getGeoData(location:string) {
+  const baseURL = "http://api.openweathermap.org/geo/1.0/direct";
+  const limit = 5;
 
+  const url = `${baseURL}?q=${encodeURIComponent(location)}&limit=${limit}&appid=${apiKey}`;
 
-// add a try catchto throw error if unable to fetch info from api
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status} - ${response.statusText}`);
+    }
 
-// output weather to user 
+    const data = await response.json();
+    return data
+  } catch (error) {
+    console.error("Failed to fetch geolocation data", error);
+    throw error;
+  }
+}
+
+getGeoData("London")
+.then(data => console.log(data))
+.catch(error => console.log(error));
+
